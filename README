@@ -4,8 +4,8 @@ socketfun
 socketfun is a collection of well commented socket programming files.
 Error checking is not performed for purpose of brevity and readability.
 
-general building instructions
------------------------------
+general build instructions
+--------------------------
 $ gcc -o server -std=c90 -Wall -Wwrite-strings server.c
 $ gcc -o client -std=c90 -Wall -Wwrite-strings client.c
 

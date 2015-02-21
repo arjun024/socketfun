@@ -1,0 +1,20 @@
+socketfun
+---------
+
+socketfun is a collection of well commented socket programming files.
+Error checking is not performed for purpose of brevity and readability.
+
+general building instructions
+-----------------------------
+$ gcc -o server -std=c90 -Wall -Wwrite-strings server.c
+$ gcc -o client -std=c90 -Wall -Wwrite-strings client.c
+
+$ ./server
+
+On a different teminal
+
+$ ./client
+
+status
+------
+work in progress

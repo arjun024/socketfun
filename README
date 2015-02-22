@@ -1,7 +1,7 @@
 socketfun
 ---------
 
-socketfun is a collection of well commented socket programming files.
+socketfun is a collection of well commented socket programming code.
 Error checking is not performed for purpose of brevity and readability.
 
 general build instructions

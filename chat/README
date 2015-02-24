@@ -5,8 +5,8 @@ This accomplishes a chat server and clients that can chat with each other.
 
 general build instructions
 --------------------------
-$ gcc -o server -std=c90 -Wall -Wwrite-strings server.c
-$ gcc -o client -std=c90 -Wall -Wwrite-strings client.c
+$ gcc -o server -lpthread -std=c90 -Wall server.c
+$ gcc -o client -lpthread -std=c90 -Wall client.c
 
 $ ./server
 

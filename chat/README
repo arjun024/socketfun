@@ -1,0 +1,24 @@
+socketfun - chat
+----------------
+
+This accomplishes a chat server and clients that can chat with each other.
+
+general build instructions
+--------------------------
+$ gcc -o server -std=c90 -Wall -Wwrite-strings server.c
+$ gcc -o client -std=c90 -Wall -Wwrite-strings client.c
+
+$ ./server
+
+On different teminals
+
+$ ./client
+
+commands
+--------
+
+ls - to get list of users currently connected to the server
+
+send <username> <msg> - to send a message to a particular user
+
+exit - to disconnect from the server

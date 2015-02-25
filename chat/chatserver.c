@@ -121,8 +121,8 @@ void *handle_client(void* c)
 			if(tmp == NULL)
 				continue;
 			recipient = tmp + 1;
-			
-			tmp = strchr(recipient, ' '); 
+
+			tmp = strchr(recipient, ' ');
 			if(tmp == NULL)
 				continue;
 			*tmp = '\0';
@@ -136,6 +136,7 @@ void *handle_client(void* c)
 			sprintf(formatted_msg, "%s: %s", cnode->username, msg);
 			printf("%s sent msg to %s\n", cnode->username, targetnode->username);
 			write(targetnode->sockfd, formatted_msg, strlen(formatted_msg) + 1);
+			free(formatted_msg);
 		}
 	}
 
@@ -153,6 +154,8 @@ int main(void)
 	unsigned int supplied_len;
 	unsigned int *ip_suppliedlen_op_storedlen;
 	pthread_t thread;
+
+	pthread_mutex_init(&client_list_lock, NULL);
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -181,4 +184,3 @@ int main(void)
 	}
 	return 0;
 }
-

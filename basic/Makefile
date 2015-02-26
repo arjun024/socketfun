@@ -1,0 +1,17 @@
+CC = gcc
+
+CFLAGS  = -std=c90 -Wall -Wwrite-strings
+
+SERVER_TARGET = server
+CLIENT_TARGET = client
+
+all: $(SERVER_TARGET) $(CLIENT_TARGET)
+
+$(SERVER_TARGET): $(SERVER_TARGET).c
+	$(CC) $(CFLAGS) -o $(SERVER_TARGET) $(SERVER_TARGET).c
+
+$(CLIENT_TARGET): $(CLIENT_TARGET).c
+	$(CC) $(CFLAGS) -o $(CLIENT_TARGET) $(CLIENT_TARGET).c
+
+clean:
+	rm $(SERVER_TARGET) $(CLIENT_TARGET)

@@ -42,31 +42,36 @@ int main(void)
 {
 	int sockfd;
 	char filler[16] = {0};
-	/* this is the container for socket's address that contains 
-	 * address family, ip address, port
-	 */
+	/*
+	* this is the container for socket's address that contains
+	* address family, ip address, port
+	*/
 	struct sockaddr serv_addr;
 
-	/* creates a socket of family Internet sockets (AF_INET) and 
-	 * of type stream. 0 indicates to system to choose appropriate 
-	 * protocol (eg: TCP) 
-	 */
+	/*
+	* creates a socket of family Internet sockets (AF_INET) and
+	* of type stream. 0 indicates to system to choose appropriate
+	* protocol (eg: TCP)
+	*/
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	memset(&serv_addr, 0, sizeof(serv_addr));
 
-	/* Address represented by struct sockaddr:
-	 * first 2 bytes: Address Family,
-	 * 2 bytes: port,
-	 * 2 bytes: ipaddr,
-	 * 8 bytes: zeroes
-	 */
-	/* htons() and htonl() change endianness to
-	 * network order which is the standard for network
-	 * communication.
-	 */
+	/*
+	* Address represented by struct sockaddr:
+	* first 2 bytes: Address Family,
+	* next 2 bytes: port,
+	* next 2 bytes: ipaddr,
+	* next 8 bytes: zeroes
+	*/
+	/*
+	* htons() and htonl() change endianness to
+	* network order which is the standard for network
+	* communication.
+	*/
 	filler[0] = (unsigned short)AF_INET;
 	filler[2] = (unsigned short)htons(port);
 	filler[4] = (unsigned long)htonl(INADDR_ANY);
+
+	/* copy data in the filler buffer to the socket address */
 	memcpy(&serv_addr, filler, sizeof(serv_addr));
 
 	/* makes connection per the socket address */
@@ -75,4 +80,3 @@ int main(void)
 	interact_with_server(sockfd);
 	return 0;
 }
-

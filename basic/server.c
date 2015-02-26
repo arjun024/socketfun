@@ -20,7 +20,7 @@ void serve_client(int cfd)
 	write(cfd, "You are now connected.\nEnter username:", 38);
 	/* wait for username */
 	read(cfd, buffer, BUFF_SIZE);
-	
+
 	if(strcmp(buffer, "arjun024")) {
 		write(cfd, "Authentication failed", 21);
 		printf("A user tried to login using: %s\n", buffer);
@@ -36,59 +36,67 @@ int main(void)
 	int sockfd, client_sockfd;
 	pid_t pid;
 	char filler[16] = {0};
-	/* this is the container for socket's address that contains 
-	 * address family, ip address, port
-	 */
+	/*
+	* this is the container for socket's address that contains
+	* address family, ip address, port
+	*/
 	struct sockaddr serv_addr, client_addr;
 	unsigned int supplied_len;
 	unsigned int *ip_suppliedlen_op_storedlen;
 
-	/* creates a socket of family Internet sockets (AF_INET) and 
-	 * of type stream. 0 indicates to system to choose appropriate 
-	 * protocol (eg: TCP) 
-	 */
+	/*
+	* creates a socket of family Internet sockets (AF_INET) and
+	* of type stream. 0 indicates to system to choose appropriate
+	* protocol (eg: TCP)
+	*/
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	/* fill the struct with zeroes */
-	memset(&serv_addr, 0, sizeof(serv_addr));
 
-	/* Address represented by struct sockaddr:
-	 * first 2 bytes: Address Family,
-	 * 2 bytes: port,
-	 * 2 bytes: ipaddr,
-	 * 8 bytes: zeroes
-	 */
-	/* htons() and htonl() change endianness to
-	 * network order which is the standard for network
-	 * communication.
-	 */
+	/*
+	* Address represented by struct sockaddr:
+	* first 2 bytes: Address Family,
+	* next 2 bytes: port,
+	* next 2 bytes: ipaddr,
+	* next 8 bytes: zeroes
+	*/
+	/*
+	* htons() and htonl() change endianness to
+	* network order which is the standard for network
+	* communication.
+	*/
 	filler[0] = (unsigned short)AF_INET;
 	filler[2] = (unsigned short)htons(port);
 	filler[4] = (unsigned long)htonl(INADDR_ANY);
+
+	/* copy data in the filler buffer to the socket address */
 	memcpy(&serv_addr, filler, sizeof(serv_addr));
 
 	/* binds a socket to an address */
 	bind(sockfd, &serv_addr, sizeof(serv_addr));
 
-	/* allows the process to listen on the socket for given 
-	 * max number of connections
-	 */
+	/*
+	* allows the process to listen on the socket for given
+	* max number of connections
+	*/
 	listen(sockfd, 5);
 
-	/* This ptr on input specifies the length of the supplied sockaddr,
-	 * and on output specifies the length of the stored address
-	 */
+	/*
+	* This ptr on input specifies the length of the supplied sockaddr,
+	* and on output specifies the length of the stored address
+	*/
 	supplied_len = sizeof(client_addr);
 	ip_suppliedlen_op_storedlen = &supplied_len;
 
-	/* ready to accept multiple client -
-	 * for each client, we will fork and let the parent come back to
-	 * the beginning of the loop to wait for further clients
-	 * while the child deals with the accepted client.
-	 */
+	/*
+	* ready to accept multiple clients -
+	* for each client, we will fork and let the parent come back to
+	* the beginning of the loop to wait for further clients
+	* while the child deals with the accepted client.
+	*/
 	while(1) {
-		/* causes the process to block until a client connects to the server,
-		 * returns a new file descriptor to communicate with the connected client
-		 */
+		/*
+		* causes the process to block until a client connects to the server,
+		* returns a new file descriptor to communicate with the connected client
+		*/
 		client_sockfd = accept(sockfd, &client_addr, ip_suppliedlen_op_storedlen);
 
 		pid = fork();
@@ -108,4 +116,3 @@ int main(void)
 	}
 	return 0;
 }
-

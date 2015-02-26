@@ -1,0 +1,29 @@
+socketfun - basic
+-----------------
+
+This accomplishes a rudimentary server and clients that can communicate with the server.
+The client is prompted to enter a username.
+If "arjun024" is entered as username the server replies "Authentication successful",
+else it replies "Authentication failed".
+Error checking is not performed for purpose of brevity and readability.
+
+build instructions
+--------------------------
+$ gcc -o server -std=c90 -Wall -Wwrite-strings server.c
+$ gcc -o client -std=c90 -Wall -Wwrite-strings client.c
+
+or do
+
+$ make
+
+running
+-------
+$ ./server
+
+On a different teminal
+
+$ ./client
+
+clean up
+--------
+$ make clean

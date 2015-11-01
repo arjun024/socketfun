@@ -63,9 +63,12 @@ int main(void)
 	* network order which is the standard for network
 	* communication.
 	*/
-	filler[0] = (unsigned short)AF_INET;
-	filler[2] = (unsigned short)htons(port);
-	filler[4] = (unsigned long)htonl(INADDR_ANY);
+	filler[0] = AF_INET & 0xFF;
+	filler[1] = AF_INET >> 8 & 0xFF;
+	filler[2] = htons(port) & 0xFF;
+	filler[3] = htons(port) >> 8 & 0xFF;
+	filler[4] = htonl(INADDR_ANY) & 0xFF;
+	filler[5] = htonl(INADDR_ANY) >> 8 & 0xFF;
 
 	/*
 	* The following method of memcpy-ing is a little risky.

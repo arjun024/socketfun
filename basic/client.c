@@ -59,7 +59,7 @@ int main(void)
 	* Address represented by struct sockaddr:
 	* first 2 bytes: Address Family,
 	* next 2 bytes: port,
-	* next 2 bytes: ipaddr,
+	* next 4 bytes: ipaddr,
 	* next 8 bytes: zeroes
 	*/
 	/*
@@ -73,6 +73,8 @@ int main(void)
 	filler[3] = htons(port) >> 8 & 0xFF;
 	filler[4] = htonl(INADDR_ANY) & 0xFF;
 	filler[5] = htonl(INADDR_ANY) >> 8 & 0xFF;
+	filler[6] = htonl(INADDR_ANY) >> 16 & 0xFF;
+	filler[7] = htonl(INADDR_ANY) >> 24 & 0xFF;
 
 	/*
 	* The following method of memcpy-ing is a little risky.

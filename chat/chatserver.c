@@ -254,6 +254,18 @@ int main(void)
 	filler[2] = (unsigned short)htons(port);
 	filler[4] = (unsigned long)htonl(INADDR_ANY);
 
+	/*
+	* The following method of memcpy-ing is a little risky.
+	* It's best done using a structure sockaddr_in like:
+	* struct sockaddr_in serv_addr;
+	* serv_addr.sin_family = AF_INET;
+	* serv_addr.sin_port = htons(port);
+	* serv_addr.sin_addr.s_addr = INADDR_ANY;
+	* Why didn't I use sockaddr_in?
+	* * sockaddr_in is just a wrapper around sockaddr
+	* * Functions like connect() do not know of any type sockaddr_in
+	* This is just to demonstrate how socket address is read
+	*/
 	/* copy data in the filler buffer to the socket address */
 	memcpy(&serv_addr, filler, sizeof(serv_addr));
 

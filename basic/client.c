@@ -95,5 +95,9 @@ int main(void)
 	connect(sockfd, &serv_addr, sizeof(serv_addr));
 
 	interact_with_server(sockfd);
+
+	/* close socket since we are done */
+	close(sockfd);
+
 	return 0;
 }

@@ -1,8 +1,7 @@
 /*
-* Copyright (C) 2015  Arjun Sreedharan
+* Author:  Arjun Sreedharan
 * License: GPL version 2 or higher http://www.gnu.org/licenses/gpl.html
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -214,14 +213,19 @@ void *handle_client(void* c)
 int main(void)
 {
 	int sockfd, client_sockfd;
+
 	/*
-	* this is the container for socket's address that contains
-	* address family, ip address, port
+	* struct sockaddr defines a socket address.
+	* A socket address is a combination of address family,
+	* ip address and port.
+	* For IP sockets, we may use struct sockaddr_in which is
+	* just a wrapper around struct sockaddr.
+	* Funtions like bind() etc are only aware of struct sockaddr.
 	*/
-	struct sockaddr serv_addr, client_addr;
-	char filler[16] = {0};
+	struct sockaddr_in serv_addr, client_addr;
 	unsigned int supplied_len;
 	unsigned int *ip_suppliedlen_op_storedlen;
+
 	/* just to dump the handle for the spawned thread - no use */
 	pthread_t thread;
 
@@ -239,7 +243,7 @@ int main(void)
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
 	/*
-	* Address represented by struct sockaddr:
+	* Socket adddress represented by struct sockaddr:
 	* first 2 bytes: Address Family,
 	* next 2 bytes: port,
 	* next 4 bytes: ipaddr,
@@ -250,32 +254,29 @@ int main(void)
 	* network order which is the standard for network
 	* communication.
 	*/
-	filler[0] = AF_INET & 0xFF;
-	filler[1] = AF_INET >> 8 & 0xFF;
-	filler[2] = htons(port) & 0xFF;
-	filler[3] = htons(port) >> 8 & 0xFF;
-	filler[4] = htonl(INADDR_ANY) & 0xFF;
-	filler[5] = htonl(INADDR_ANY) >> 8 & 0xFF;
-	filler[6] = htonl(INADDR_ANY) >> 16 & 0xFF;
-	filler[7] = htonl(INADDR_ANY) >> 24 & 0xFF;
+
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(port);
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	/*
-	* The following method of memcpy-ing is a little risky.
-	* It's best done using a structure sockaddr_in like:
-	* struct sockaddr_in serv_addr;
-	* serv_addr.sin_family = AF_INET;
-	* serv_addr.sin_port = htons(port);
-	* serv_addr.sin_addr.s_addr = INADDR_ANY;
-	* Why didn't I use sockaddr_in?
-	* * sockaddr_in is just a wrapper around sockaddr
-	* * Functions like connect() do not know of any type sockaddr_in
-	* This is just to demonstrate how socket address is read
+	* The above achieves what could be done using the following
+	* on a little endian machine.
+	* This breaks if the structure has padding
+		char filler[16] = {0};
+		filler[0] = AF_INET & 0xFF;
+		filler[1] = AF_INET >> 8 & 0xFF;
+		filler[2] = htons(port) & 0xFF;
+		filler[3] = htons(port) >> 8 & 0xFF;
+		filler[4] = htonl(INADDR_ANY) & 0xFF;
+		filler[5] = htonl(INADDR_ANY) >> 8 & 0xFF;
+		filler[6] = htonl(INADDR_ANY) >> 16 & 0xFF;
+		filler[7] = htonl(INADDR_ANY) >> 24 & 0xFF;
+		memcpy(&serv_addr, filler, sizeof(serv_addr));
 	*/
-	/* copy data in the filler buffer to the socket address */
-	memcpy(&serv_addr, filler, sizeof(serv_addr));
 
 	/* binds a socket to an address */
-	bind(sockfd, &serv_addr, sizeof serv_addr);
+	bind(sockfd, (struct sockaddr*) &serv_addr, sizeof serv_addr);
 
 	/*
 	* allows the process to listen on the socket for given
@@ -303,7 +304,8 @@ int main(void)
 		* causes the process to block until a client connects to the server,
 		* returns a new file descriptor to communicate with the connected client
 		*/
-		client_sockfd = accept(sockfd, &client_addr, ip_suppliedlen_op_storedlen);
+		client_sockfd = accept(sockfd, (struct sockaddr*) &client_addr,
+							ip_suppliedlen_op_storedlen);
 
 		cnode = add_client(client_sockfd);
 

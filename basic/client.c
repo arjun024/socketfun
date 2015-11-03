@@ -92,6 +92,20 @@ int main(void)
 		memcpy(&serv_addr, filler, sizeof(serv_addr));
 	*/
 
+	/*
+	* Note that we do not bind() our socket to any socket adddress here.
+	* This is because on the client side, you would only use bind() if you want
+	* to use a particular client side port to connect to the server.
+	* When you do not bind(), the kernel will pick a port for you.
+	* Read here how kernel gets you a port: https://idea.popcount.org/2014-04-03-bind-before-connect
+	* There are a few protocols in the Unix world that expect clients to connect from a particular port.
+	* Create a new socket address definition and bind it to socket in such cases:
+		struct sockaddr_in client_addr;
+		client_addr.sin_family = AF_INET;
+		client_addr.sin_port = htons(CLIENT_PORT);
+		client_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		bind(sockfd, (struct sockaddr*) &client_addr, sizeof client_addr);
+	*/
 
 	/* makes connection per the socket address */
 	connect(sockfd, (struct sockaddr*) &serv_addr, sizeof(serv_addr));

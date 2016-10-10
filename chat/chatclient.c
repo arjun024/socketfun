@@ -138,6 +138,12 @@ void *receiver(void *sfd)
 	char buffer[BUFF_SIZE] = {0};
 	int sockfd = *(int*)sfd;
 	int readlen;
+	/*
+	* If a new msg is received when we are processing the prev msg,
+	* the kernel buffers the received data for us since we use streaming sockets.
+	* It waits in queue until the next read().
+	* That's the reason we do not create a thread for every received msg.
+	*/
 	while(1) {
 		memset(buffer, 0, sizeof buffer);
 		readlen = read(sockfd, buffer, sizeof buffer);
